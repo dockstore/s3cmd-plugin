@@ -138,10 +138,11 @@ public class S3CmdPlugin extends Plugin {
             String trimmedPath = destPath.replace("s3://", "");
             List<String> splitPathList = Lists.newArrayList(trimmedPath.split("/"));
             String bucketName = splitPathList.remove(0);
-            if (checkBucket("s3://" + bucketName)) {
+            String fullBucketName = "s3://" + bucketName;
+            if (checkBucket(fullBucketName)) {
                 LOG.info("Bucket exists");
             } else {
-                createBucket(bucketName);
+                createBucket(fullBucketName);
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
             int exitCode = executeConsoleCommand(command, true);
@@ -175,7 +176,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if bucket successfully created, false if it wasn't successfully created
          */
         private boolean createBucket(String bucket) {
-            String command = client + " -c " + configLocation + " mb " + "s3://" + bucket;
+            String command = client + " -c " + configLocation + " mb " + bucket;
             int exitCode = executeConsoleCommand(command, false);
             if (exitCode != 0) {
                 return false;
@@ -214,9 +215,10 @@ public class S3CmdPlugin extends Plugin {
                                 }
                             }
                         }
+                        if (command.contains("put") || command.contains("get")) {
+                            System.out.println();
+                        }
                         reader.close();
-                        System.out.println();
-
                     } catch (IOException e) {
                         LOG.error("Could not read input stream from process. " + e.getMessage());
                         throw new RuntimeException(e);
