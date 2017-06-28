@@ -98,7 +98,11 @@ public class S3CmdPlugin extends Plugin {
             // ambiguous how to reference s3cmd files, rip off these kinds of headers
             sourcePath = sourcePath.replaceFirst("s3cmd", "s3");
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
-            return executeConsoleCommand(command, true);
+            int exitCode = executeConsoleCommand(command, true);
+            if (exitCode != 0) {
+                System.exit(exitCode);
+            }
+            return true;
         }
 
         /**
@@ -140,7 +144,11 @@ public class S3CmdPlugin extends Plugin {
                 createBucket(bucketName);
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
-            return executeConsoleCommand(command, true);
+            int exitCode = executeConsoleCommand(command, true);
+            if (exitCode != 0) {
+                System.exit(exitCode);
+            }
+            return true;
         }
 
         /**
@@ -152,7 +160,12 @@ public class S3CmdPlugin extends Plugin {
         private boolean checkBucket(String bucket) {
             String command = client + " -c " + configLocation + " info " + bucket;
             LOG.info("Bucket information: ");
-            return executeConsoleCommand(command, false);
+            int exitCode = executeConsoleCommand(command, false);
+            if (exitCode != 0) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         /**
@@ -163,7 +176,12 @@ public class S3CmdPlugin extends Plugin {
          */
         private boolean createBucket(String bucket) {
             String command = client + " -c " + configLocation + " mb " + bucket;
-            return executeConsoleCommand(command, false);
+            int exitCode = executeConsoleCommand(command, false);
+            if (exitCode != 0) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         /**
@@ -172,7 +190,7 @@ public class S3CmdPlugin extends Plugin {
          * @param command The command to execute
          * @return True if command was successfully execute without error, false otherwise.
          */
-        private boolean executeConsoleCommand(String command, boolean printStdout) {
+        private int executeConsoleCommand(String command, boolean printStdout) {
             ProcessBuilder builder = new ProcessBuilder(command.split(" "));
             builder.redirectErrorStream(true);
             final Process p;
@@ -197,24 +215,24 @@ public class S3CmdPlugin extends Plugin {
                         }
                         reader.close();
                         System.out.println();
+
                     } catch (IOException e) {
                         LOG.error("Could not read input stream from process. " + e.getMessage());
+                        throw new RuntimeException(e);
                     }
                 });
                 ioThread.start();
                 try {
-                    if (p.waitFor() == 0) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    int exitCode = p.waitFor();
+                    return exitCode;
                 } catch (InterruptedException e) {
                     LOG.error("Process interrupted. " + e.getMessage());
-                    return false;
+                    throw new RuntimeException(e);
                 }
             } catch (IOException e) {
                 LOG.error("Could not execute command: " + command);
-                return false;
+
+                throw new RuntimeException(e);
             }
         }
     }
