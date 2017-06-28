@@ -191,7 +191,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if command was successfully execute without error, false otherwise.
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
-            LOG.info("Executing command: " + command);
+            System.out.println("Executing command: " + command);
             ProcessBuilder builder = new ProcessBuilder(command.split(" "));
             builder.redirectErrorStream(true);
             final Process p;
