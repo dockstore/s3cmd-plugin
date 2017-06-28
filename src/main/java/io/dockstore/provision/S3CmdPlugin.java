@@ -100,7 +100,7 @@ public class S3CmdPlugin extends Plugin {
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
             int exitCode = executeConsoleCommand(command, true);
             if (exitCode != 0) {
-                System.exit(exitCode);
+                throw new RuntimeException("Process exited with exit code" + exitCode);
             }
             return true;
         }
@@ -146,7 +146,7 @@ public class S3CmdPlugin extends Plugin {
             String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
             int exitCode = executeConsoleCommand(command, true);
             if (exitCode != 0) {
-                System.exit(exitCode);
+                throw new RuntimeException("Process exited with exit code" + exitCode);
             }
             return true;
         }
@@ -175,7 +175,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if bucket successfully created, false if it wasn't successfully created
          */
         private boolean createBucket(String bucket) {
-            String command = client + " -c " + configLocation + " mb " + bucket;
+            String command = client + " -c " + configLocation + " mb " + "s3://" + bucket;
             int exitCode = executeConsoleCommand(command, false);
             if (exitCode != 0) {
                 return false;
@@ -191,6 +191,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if command was successfully execute without error, false otherwise.
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
+            LOG.info("Executing command: " + command);
             ProcessBuilder builder = new ProcessBuilder(command.split(" "));
             builder.redirectErrorStream(true);
             final Process p;
