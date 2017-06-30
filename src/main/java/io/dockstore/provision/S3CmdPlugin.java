@@ -99,10 +99,20 @@ public class S3CmdPlugin extends Plugin {
             sourcePath = sourcePath.replaceFirst("s3cmd", "s3");
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
             int exitCode = executeConsoleCommand(command, true);
-            if (exitCode != 0) {
+            switch (exitCode) {
+            case 0: {
+                return true;
+            }
+            case 65:
+            case 71:
+            case 74:
+            case 75: {
+                return false;
+            }
+            default: {
                 throw new RuntimeException("Process exited with exit code" + exitCode);
             }
-            return true;
+            }
         }
 
         /**
@@ -146,10 +156,20 @@ public class S3CmdPlugin extends Plugin {
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
             int exitCode = executeConsoleCommand(command, true);
-            if (exitCode != 0) {
+            switch (exitCode) {
+            case 0: {
+                return true;
+            }
+            case 65:
+            case 71:
+            case 74:
+            case 75: {
+                return false;
+            }
+            default: {
                 throw new RuntimeException("Process exited with exit code" + exitCode);
             }
-            return true;
+            }
         }
 
         /**
