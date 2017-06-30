@@ -99,6 +99,12 @@ public class S3CmdPlugin extends Plugin {
             sourcePath = sourcePath.replaceFirst("s3cmd", "s3");
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
             int exitCode = executeConsoleCommand(command, true);
+            return checkExitCode(exitCode);
+        }
+
+        // This function checks the exit code and decides what to return
+        // See https://github.com/s3tools/s3cmd/blob/master/S3/ExitCodes.py for exit code description
+        private boolean checkExitCode(int exitCode) {
             switch (exitCode) {
             case 0: {
                 return true;
@@ -156,20 +162,7 @@ public class S3CmdPlugin extends Plugin {
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
             int exitCode = executeConsoleCommand(command, true);
-            switch (exitCode) {
-            case 0: {
-                return true;
-            }
-            case 65:
-            case 71:
-            case 74:
-            case 75: {
-                return false;
-            }
-            default: {
-                throw new RuntimeException("Process exited with exit code" + exitCode);
-            }
-            }
+            return checkExitCode(exitCode);
         }
 
         /**
