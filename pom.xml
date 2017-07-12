@@ -6,7 +6,7 @@
     <artifactId>dockstore-file-s3cmd-plugin</artifactId>
     <packaging>jar</packaging>
     <name>dockstore-file-s3cmd-plugin</name>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.7-SNAPSHOT</version>
 
     <properties>
         <plugin.id>${project.artifactId}</plugin.id>
