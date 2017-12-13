@@ -18,6 +18,7 @@ package io.dockstore.provision;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +42,8 @@ import ro.fortsoft.pf4j.RuntimeMode;
  */
 public class S3CmdPlugin extends Plugin {
     private static final Logger LOG = LoggerFactory.getLogger(S3CmdPlugin.class);
-
+    private static final long DEFAULT_CHUNK_SIZE = 15;
+    private static final long MAX_PARTS = 10000;
     public S3CmdPlugin(PluginWrapper wrapper) {
         super(wrapper);
     }
@@ -150,6 +152,17 @@ public class S3CmdPlugin extends Plugin {
          */
         public boolean uploadTo(String destPath, Path sourceFile, Optional<String> metadata) {
             setConfigAndClient();
+            String modifedChunkSize = "";
+            try {
+                long sizeInBytes = Files.size(sourceFile);
+                long sizeInMegabytes = sizeInBytes/1000000;
+                if (sizeInMegabytes > DEFAULT_CHUNK_SIZE*MAX_PARTS) {
+                    long newChunkSize = (long)Math.ceil(sizeInMegabytes/MAX_PARTS);
+                    modifedChunkSize = " --multipart-chunk-size-mb=" + newChunkSize;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             destPath = destPath.replace("s3cmd://", "s3://");
             String trimmedPath = destPath.replace("s3://", "");
             List<String> splitPathList = Lists.newArrayList(trimmedPath.split("/"));
@@ -160,7 +173,7 @@ public class S3CmdPlugin extends Plugin {
             } else {
                 createBucket(fullBucketName);
             }
-            String command = client + " -c " + configLocation + " put " + sourceFile.toString() + " " + destPath;
+            String command = client + " -c " + configLocation + " put " + sourceFile.toString().replace(" ", "%32") + " " + destPath + modifedChunkSize;
             int exitCode = executeConsoleCommand(command, true);
             return checkExitCode(exitCode);
         }
@@ -206,7 +219,11 @@ public class S3CmdPlugin extends Plugin {
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
             System.out.println("Executing command: " + command);
-            ProcessBuilder builder = new ProcessBuilder(command.split(" "));
+            String[] split = command.split(" ");
+            for (int i = 0; i< split.length; i++) {
+                split[i] = split[i].replace("%32", " ");
+            }
+            ProcessBuilder builder = new ProcessBuilder(split);
             builder.redirectErrorStream(true);
             final Process p;
             try {
