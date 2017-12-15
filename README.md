@@ -2,6 +2,9 @@
 Dockstore s3cmd file provisioning plugin.  Requires s3cmd installed along with a valid configuration file.
 Run s3cmd --configure to create a configuration file at the default location.
 
+## Notes
+For files over 150 GB, chunk size is kept as close to the default chunk size as possible.  Files over 50 TB is unsupported.
+
 ## Usage
 
 The s3cmd plugin is capable of downloading files by calling out to an installed copy of the [s3cmd client](http://s3tools.org/s3cmd).

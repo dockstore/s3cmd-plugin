@@ -37,13 +37,13 @@ import ro.fortsoft.pf4j.Plugin;
 import ro.fortsoft.pf4j.PluginWrapper;
 import ro.fortsoft.pf4j.RuntimeMode;
 
+import static io.dockstore.provision.S3CmdPluginHelper.getChunkSize;
+
 /**
  * @author gluu
  */
 public class S3CmdPlugin extends Plugin {
     private static final Logger LOG = LoggerFactory.getLogger(S3CmdPlugin.class);
-    private static final long DEFAULT_CHUNK_SIZE = 15;
-    private static final long MAX_PARTS = 10000;
     public S3CmdPlugin(PluginWrapper wrapper) {
         super(wrapper);
     }
@@ -152,17 +152,13 @@ public class S3CmdPlugin extends Plugin {
          */
         public boolean uploadTo(String destPath, Path sourceFile, Optional<String> metadata) {
             setConfigAndClient();
-            String modifedChunkSize = "";
+            long sizeInBytes = 0;
             try {
-                long sizeInBytes = Files.size(sourceFile);
-                long sizeInMegabytes = sizeInBytes/1000000;
-                if (sizeInMegabytes > DEFAULT_CHUNK_SIZE*MAX_PARTS) {
-                    long newChunkSize = (long)Math.ceil(sizeInMegabytes/MAX_PARTS);
-                    modifedChunkSize = " --multipart-chunk-size-mb=" + newChunkSize;
-                }
+                sizeInBytes = Files.size(sourceFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            String modifedChunkSize = getChunkSize(sizeInBytes);
             destPath = destPath.replace("s3cmd://", "s3://");
             String trimmedPath = destPath.replace("s3://", "");
             List<String> splitPathList = Lists.newArrayList(trimmedPath.split("/"));
@@ -194,6 +190,7 @@ public class S3CmdPlugin extends Plugin {
                 return true;
             }
         }
+
 
         /**
          * Creates the bucket
