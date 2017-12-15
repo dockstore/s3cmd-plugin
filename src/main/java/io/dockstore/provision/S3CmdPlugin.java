@@ -130,15 +130,9 @@ public class S3CmdPlugin extends Plugin {
             if (config == null) {
                 LOG.error("You are missing a dockstore config file");
             }
-            if (config.containsKey(CLIENT_LOCATION)) {
-                setClient(config.get(CLIENT_LOCATION));
-            } else {
-                setClient(DEFAULT_CLIENT);
-            }
-            if (config.containsKey(CONFIG_FILE_LOCATION)) {
-                setConfigLocation(config.get(CONFIG_FILE_LOCATION));
-            } else {
-                setConfigLocation(DEFAULT_CONFIGURATION);
+            else {
+                setConfigLocation(config.getOrDefault(CONFIG_FILE_LOCATION, DEFAULT_CONFIGURATION));
+                setClient(config.getOrDefault(CLIENT_LOCATION, DEFAULT_CLIENT));
             }
         }
 
