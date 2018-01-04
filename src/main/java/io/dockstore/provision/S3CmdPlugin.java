@@ -215,7 +215,9 @@ public class S3CmdPlugin extends Plugin {
          * @return True if command was successfully execute without error, false otherwise.
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
-            System.out.println("Executing command: " + command);
+            if (verbosity >= 1) {
+                System.out.println("Executing command: " + command);
+            }
             String[] split = command.split(" ");
             for (int i = 0; i < split.length; i++) {
                 split[i] = split[i].replace("%32", " ");
