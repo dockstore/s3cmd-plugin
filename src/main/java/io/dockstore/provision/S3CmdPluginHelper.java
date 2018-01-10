@@ -31,6 +31,11 @@ public class S3CmdPluginHelper {
         return modifiedChunkSize;
     }
 
+    /**
+     * This determines whether the next lines in the stderr/stdout will require carriage returns
+     * @param line The current line read from stderr/stdout
+     * @return True if the next lines require carriage return, false otherwise
+     */
     public static boolean nextLinesRequireCarriageReturn(String line) {
         Pattern pattern = Pattern.compile("download.*|upload.*");
         Matcher matcher = pattern.matcher(line);
