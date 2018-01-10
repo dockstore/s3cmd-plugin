@@ -231,20 +231,25 @@ public class S3CmdPlugin extends Plugin {
                     try {
                         final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
                         String line;
+                        boolean carriage = false;
                         while ((line = reader.readLine()) != null) {
                             if (printStdout) {
-                                // The first line of s3cmd plugin will start with "download", must isolate from others
-                                Pattern pattern = Pattern.compile("download.*");
-                                Matcher matcher = pattern.matcher(line);
-                                if (matcher.matches()) {
+                                // The line prior to the carriage return will start with "download" or "upload", must isolate from others
+                                if (carriage == false) {
                                     System.out.println(line);
-                                } else {
-                                    // Output of process doesn't seem to retain the carriage returns, so manually doing that
+                                    Pattern pattern = Pattern.compile("download.*|upload.*");
+                                    Matcher matcher = pattern.matcher(line);
+                                    if (matcher.matches()) {
+                                        carriage = true;
+                                    }
+                                }
+                                else {
                                     System.out.print("\r" + line);
                                 }
                             }
                         }
-                        if (command.contains("put") || command.contains("get")) {
+                        // For some reason file provisioning download does not output a newline, but upload does
+                        if (command.contains("get")) {
                             System.out.println();
                         }
                         reader.close();
