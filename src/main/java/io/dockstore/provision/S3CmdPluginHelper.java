@@ -1,5 +1,8 @@
 package io.dockstore.provision;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author gluu
  * @since 15/12/17
@@ -7,6 +10,7 @@ package io.dockstore.provision;
 public class S3CmdPluginHelper {
     private static final long DEFAULT_CHUNK_SIZE = 15;
     private static final long MAX_PARTS = 10000;
+
     /**
      * Calculates the chunk size for uploads and the flag to set it.
      * If the file is under 150 GB, the chunk size is left as the default (15 MB).
@@ -19,11 +23,18 @@ public class S3CmdPluginHelper {
      */
     public static String getChunkSize(long sizeInBytes) {
         String modifiedChunkSize = "";
-        double sizeInMegabytes = (double)sizeInBytes/1000000;
-        if (sizeInMegabytes > DEFAULT_CHUNK_SIZE*MAX_PARTS) {
-            long newChunkSize = (long)Math.ceil(sizeInMegabytes/MAX_PARTS);
+        double sizeInMegabytes = (double)sizeInBytes / 1000000;
+        if (sizeInMegabytes > DEFAULT_CHUNK_SIZE * MAX_PARTS) {
+            long newChunkSize = (long)Math.ceil(sizeInMegabytes / MAX_PARTS);
             modifiedChunkSize = " --multipart-chunk-size-mb=" + newChunkSize;
         }
         return modifiedChunkSize;
+    }
+
+    public static boolean nextLinesRequireCarriageReturn(String line) {
+        Pattern pattern = Pattern.compile("download.*|upload.*");
+        Matcher matcher = pattern.matcher(line);
+        boolean matches = matcher.matches();
+        return matches;
     }
 }

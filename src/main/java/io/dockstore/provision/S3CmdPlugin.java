@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +36,7 @@ import ro.fortsoft.pf4j.PluginWrapper;
 import ro.fortsoft.pf4j.RuntimeMode;
 
 import static io.dockstore.provision.S3CmdPluginHelper.getChunkSize;
+import static io.dockstore.provision.S3CmdPluginHelper.nextLinesRequireCarriageReturn;
 
 /**
  * @author gluu
@@ -235,13 +234,8 @@ public class S3CmdPlugin extends Plugin {
                                 // The line prior to the carriage return will start with "download" or "upload", must isolate from others
                                 if (carriage == false) {
                                     System.out.println(line);
-                                    Pattern pattern = Pattern.compile("download.*|upload.*");
-                                    Matcher matcher = pattern.matcher(line);
-                                    if (matcher.matches()) {
-                                        carriage = true;
-                                    }
-                                }
-                                else {
+                                    carriage = nextLinesRequireCarriageReturn(line);
+                                } else {
                                     System.out.print("\r" + line);
                                 }
                             }
