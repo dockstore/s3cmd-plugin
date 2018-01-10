@@ -59,14 +59,13 @@ This plugin gets configuration information from the following structure in ~/.do
 [dockstore-file-s3cmd-plugin]
 client = /usr/bin/s3cmd
 config-file-location = /home/user/.s3cfg
-verbosity = 3
+verbosity = 2
 ```
 
 Set the client location to your own s3cmd client and also make sure that the configuration file is available at the config-file-location.
 Verbosity configuration lets you configure the level of info display.  The default is level 3
-- Level "1" and higher prints the commands ran
-- Level "2" and higher prints the `s3cmd put` and `s3cmd get` stdout/stderr
-- Level "3" and higher prints the `s3cmd mb` stdout/stderr
-- Level "4" and higher prints the `s3cmd info` stdout/stderr
+- Level "1" and higher prints the `s3cmd put` and `s3cmd get` stdout/stderr
+- Level "2" and higher prints the `s3cmd mb` stdout/stderr
+- Level "3" and higher prints the `s3cmd info` stdout/stderr
 
 

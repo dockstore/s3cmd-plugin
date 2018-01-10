@@ -70,7 +70,7 @@ public class S3CmdPlugin extends Plugin {
         private static final String VERBOSITY = "verbosity";
         private static final String DEFAULT_CLIENT = "/usr/bin/s3cmd";
         private static final String DEFAULT_CONFIGURATION = System.getProperty("user.home") + "/.s3cfg";
-        private static final String DEFAULT_VERBOSITY = "3";
+        private static final String DEFAULT_VERBOSITY = "2";
         private int verbosity;
         private String client;
         private String configLocation;
@@ -80,7 +80,7 @@ public class S3CmdPlugin extends Plugin {
             try {
                 this.verbosity = Integer.parseInt(verbosity);
             } catch (NumberFormatException e) {
-                this.verbosity = 3;
+                this.verbosity = 2;
             }
         }
 
@@ -112,7 +112,7 @@ public class S3CmdPlugin extends Plugin {
             // ambiguous how to reference s3cmd files, rip off these kinds of headers
             sourcePath = sourcePath.replaceFirst("s3cmd", "s3");
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
-            int exitCode = executeConsoleCommand(command, verbosity > 2);
+            int exitCode = executeConsoleCommand(command, verbosity >= 1);
             return checkExitCode(exitCode);
         }
 
@@ -179,7 +179,7 @@ public class S3CmdPlugin extends Plugin {
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString().replace(" ", "%32") + " " + destPath
                     + modifiedChunkSize;
-            int exitCode = executeConsoleCommand(command, verbosity >= 2);
+            int exitCode = executeConsoleCommand(command, verbosity >= 1);
             return checkExitCode(exitCode);
         }
 
@@ -192,7 +192,7 @@ public class S3CmdPlugin extends Plugin {
         private boolean checkBucket(String bucket) {
             String command = client + " -c " + configLocation + " info " + bucket;
             LOG.info("Bucket information: ");
-            int exitCode = executeConsoleCommand(command, verbosity >= 4);
+            int exitCode = executeConsoleCommand(command, verbosity >= 3);
             return exitCode == 0;
         }
 
@@ -204,7 +204,7 @@ public class S3CmdPlugin extends Plugin {
          */
         private boolean createBucket(String bucket) {
             String command = client + " -c " + configLocation + " mb " + bucket;
-            int exitCode = executeConsoleCommand(command, verbosity >= 3);
+            int exitCode = executeConsoleCommand(command, verbosity >= 2);
             return exitCode == 0;
         }
 
@@ -215,9 +215,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if command was successfully execute without error, false otherwise.
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
-            if (verbosity >= 1) {
-                System.out.println("Executing command: " + command);
-            }
+            LOG.debug("Executing command: " + command);
             String[] split = command.split(" ");
             for (int i = 0; i < split.length; i++) {
                 split[i] = split[i].replace("%32", " ");
