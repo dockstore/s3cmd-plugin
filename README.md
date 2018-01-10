@@ -68,4 +68,9 @@ Verbosity configuration lets you configure the level of info display.  The defau
 - Level "2" and higher prints the `s3cmd mb` stdout/stderr
 - Level "3" and higher prints the `s3cmd info` stdout/stderr
 
+Using the `--debug` flag with the dockstore client will print out the commands executing by this plugin.
+```
+$ ./dockstore --debug tool launch --local-entry Dockstore.cwl --json test.json
+15:23:40.486 [main] DEBUG io.dockstore.provision.S3CmdPlugin - Executing command: /usr/local/bin/s3cmd -c /home/gluu/.s3cfg info s3://dockstore.temp
+```
 
