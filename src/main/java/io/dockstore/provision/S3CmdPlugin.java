@@ -111,7 +111,7 @@ public class S3CmdPlugin extends Plugin {
             // ambiguous how to reference s3cmd files, rip off these kinds of headers
             sourcePath = sourcePath.replaceFirst("s3cmd", "s3");
             String command = client + " -c " + configLocation + " get " + sourcePath + " " + destination + " --force";
-            int exitCode = executeConsoleCommand(command, verbosity >= 1);
+            int exitCode = executeConsoleCommand(command, true);
             return checkExitCode(exitCode);
         }
 
@@ -178,7 +178,7 @@ public class S3CmdPlugin extends Plugin {
             }
             String command = client + " -c " + configLocation + " put " + sourceFile.toString().replace(" ", "%32") + " " + destPath
                     + modifiedChunkSize;
-            int exitCode = executeConsoleCommand(command, verbosity >= 1);
+            int exitCode = executeConsoleCommand(command, true);
             return checkExitCode(exitCode);
         }
 
@@ -191,7 +191,7 @@ public class S3CmdPlugin extends Plugin {
         private boolean checkBucket(String bucket) {
             String command = client + " -c " + configLocation + " info " + bucket;
             LOG.info("Bucket information: ");
-            int exitCode = executeConsoleCommand(command, verbosity >= 3);
+            int exitCode = executeConsoleCommand(command, true);
             return exitCode == 0;
         }
 
@@ -214,6 +214,7 @@ public class S3CmdPlugin extends Plugin {
          * @return True if command was successfully execute without error, false otherwise.
          */
         private int executeConsoleCommand(String command, boolean printStdout) {
+            // Show command in dockstore --debug mode
             LOG.debug("Executing command: " + command);
             String[] split = command.split(" ");
             for (int i = 0; i < split.length; i++) {
@@ -233,7 +234,12 @@ public class S3CmdPlugin extends Plugin {
                             if (printStdout) {
                                 // The line prior to the carriage return will start with "download" or "upload", must isolate from others
                                 if (carriage == false) {
-                                    System.out.println(line);
+                                    // 's3cmd info' will only display in dockstore --debug mode
+                                    if (command.contains("info")) {
+                                        LOG.debug(line);
+                                    } else {
+                                        System.out.println(line);
+                                    }
                                     carriage = nextLinesRequireCarriageReturn(line);
                                 } else {
                                     System.out.print("\r" + line);

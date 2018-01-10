@@ -63,14 +63,24 @@ verbosity = 2
 ```
 
 Set the client location to your own s3cmd client and also make sure that the configuration file is available at the config-file-location.
-Verbosity configuration lets you configure the level of info display.  The default is level 3
-- Level "1" and higher prints the `s3cmd put` and `s3cmd get` stdout/stderr
-- Level "2" and higher prints the `s3cmd mb` stdout/stderr
-- Level "3" and higher prints the `s3cmd info` stdout/stderr
+Verbosity configuration lets you configure the level of info display.  The default is level 2.
 
-Using the `--debug` flag with the dockstore client will print out the commands executing by this plugin.
+### Verbosity
+- Level "1" doesn't print the `s3cmd mb` stdout/stderr
+- Level "2" and higher prints the `s3cmd mb` stdout/stderr
+
+Using the `--debug` flag with the dockstore client will print out the commands executed by this plugin and `s3cmd info` stdout/stderr
 ```
 $ ./dockstore --debug tool launch --local-entry Dockstore.cwl --json test.json
 15:23:40.486 [main] DEBUG io.dockstore.provision.S3CmdPlugin - Executing command: /usr/local/bin/s3cmd -c /home/gluu/.s3cfg info s3://dockstore.temp
 ```
+`s3cmd put` and `s3cmd get` stdout/stderr is always displayed no matter what
 
+In summary, the following is displayed by default:
+- `s3cmd put`
+- `s3cmd get`
+- `s3cmd mb`
+
+In summary, the following is not displayed by default:
+- the command being executed
+- `s3cmd info`
