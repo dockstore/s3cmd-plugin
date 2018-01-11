@@ -77,7 +77,17 @@ public class S3CmdPlugin extends Plugin {
 
         public void setVerbosity(String verbosity) {
             try {
-                this.verbosity = Integer.parseInt(verbosity);
+                switch (verbosity.toLowerCase()) {
+                case "minimal":
+                    this.verbosity = 1;
+                    break;
+                case "normal":
+                    this.verbosity = 2;
+                    break;
+                default:
+                    LOG.error("Unknown verbosity setting");
+                    this.verbosity = 2;
+                }
             } catch (NumberFormatException e) {
                 this.verbosity = 2;
             }
@@ -173,6 +183,8 @@ public class S3CmdPlugin extends Plugin {
                 LOG.info("Bucket exists");
             } else {
                 if (!createBucket(fullBucketName)) {
+                    // This is an error because it should've executed successfully regardless of whether it existed or not
+                    // We'll continue and try to upload regardless
                     LOG.error("Could not create bucket");
                 }
             }
@@ -190,7 +202,6 @@ public class S3CmdPlugin extends Plugin {
          */
         private boolean checkBucket(String bucket) {
             String command = client + " -c " + configLocation + " info " + bucket;
-            LOG.info("Bucket information: ");
             int exitCode = executeConsoleCommand(command, true);
             return exitCode == 0;
         }
