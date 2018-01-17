@@ -6,7 +6,7 @@ package io.dockstore.provision;
  */
 public enum VerbosityEnum
 {
-    MINIMAL(0), NORMAL(1);
+    QUIET(1), MINIMAL(2), NORMAL(3), DETAILED(4), DIAGNOSTIC(5);
 
     private int level;
 
