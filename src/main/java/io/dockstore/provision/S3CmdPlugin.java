@@ -69,27 +69,28 @@ public class S3CmdPlugin extends Plugin {
         private static final String VERBOSITY = "verbosity";
         private static final String DEFAULT_CLIENT = "/usr/bin/s3cmd";
         private static final String DEFAULT_CONFIGURATION = System.getProperty("user.home") + "/.s3cfg";
-        private static final String DEFAULT_VERBOSITY = "2";
+        private static final String DEFAULT_VERBOSITY = "normal";
         private int verbosity;
         private String client;
         private String configLocation;
         private Map<String, String> config;
 
+        // Similar to https://github.com/qos-ch/slf4j/blob/0b1e6d38cfabd4b7ed335aec1aa6b2ae0c770f08/slf4j-simple/src/main/java/org/slf4j/simple/SimpleLoggerConfiguration.java#L145
         public void setVerbosity(String verbosity) {
             try {
                 switch (verbosity.toLowerCase()) {
                 case "minimal":
-                    this.verbosity = 1;
+                    this.verbosity = VerbosityLevel.MINIMAL;
                     break;
                 case "normal":
-                    this.verbosity = 2;
+                    this.verbosity = VerbosityLevel.NORMAL;
                     break;
                 default:
                     LOG.error("Unknown verbosity setting");
-                    this.verbosity = 2;
+                    this.verbosity = VerbosityLevel.NORMAL;
                 }
             } catch (NumberFormatException e) {
-                this.verbosity = 2;
+                this.verbosity = VerbosityLevel.NORMAL;
             }
         }
 
