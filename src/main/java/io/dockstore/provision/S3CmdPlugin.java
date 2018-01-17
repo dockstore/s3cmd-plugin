@@ -70,7 +70,7 @@ public class S3CmdPlugin extends Plugin {
         private static final String DEFAULT_CLIENT = "/usr/bin/s3cmd";
         private static final String DEFAULT_CONFIGURATION = System.getProperty("user.home") + "/.s3cfg";
         private static final String DEFAULT_VERBOSITY = "normal";
-        private int verbosity;
+        private VerbosityEnum verbosity;
         private String client;
         private String configLocation;
         private Map<String, String> config;
@@ -80,17 +80,17 @@ public class S3CmdPlugin extends Plugin {
             try {
                 switch (verbosity.toLowerCase()) {
                 case "minimal":
-                    this.verbosity = VerbosityLevel.MINIMAL;
+                    this.verbosity = VerbosityEnum.MINIMAL;
                     break;
                 case "normal":
-                    this.verbosity = VerbosityLevel.NORMAL;
+                    this.verbosity = VerbosityEnum.NORMAL;
                     break;
                 default:
                     LOG.error("Unknown verbosity setting");
-                    this.verbosity = VerbosityLevel.NORMAL;
+                    this.verbosity = VerbosityEnum.NORMAL;
                 }
             } catch (NumberFormatException e) {
-                this.verbosity = VerbosityLevel.NORMAL;
+                this.verbosity = VerbosityEnum.NORMAL;
             }
         }
 
@@ -215,7 +215,7 @@ public class S3CmdPlugin extends Plugin {
          */
         private boolean createBucket(String bucket) {
             String command = client + " -c " + configLocation + " mb " + bucket;
-            int exitCode = executeConsoleCommand(command, verbosity >= 2);
+            int exitCode = executeConsoleCommand(command, verbosity.getLevel() >= VerbosityEnum.NORMAL.getLevel());
             return exitCode == 0;
         }
 
