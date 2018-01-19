@@ -67,7 +67,7 @@ Verbosity configuration lets you configure the level of info display.  The defau
 
 ### Verbosity
 - Level "Minimal" doesn't print the `s3cmd mb` stdout/stderr
-- Level "Normal" and higher prints the `s3cmd mb` stdout/stderr
+- Level "Normal" prints the `s3cmd mb` stdout/stderr
 
 Using the `--debug` flag with the dockstore client will print out the commands executed by this plugin and `s3cmd info` stdout/stderr
 ```
