@@ -7,10 +7,10 @@ jdk:
 script: 
   - mvn clean install
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y s3cmd
-  - which s3cmd
   - pip install --upgrade pip
+  - pip install --user s3cmd
+  - s3cmd --version
+  - which s3cmd
   - pip install --user localstack
   - localstack start &
 
