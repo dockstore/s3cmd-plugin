@@ -1,7 +1,17 @@
 sudo: required
 language: java
+services:
+  - docker
 jdk:
   - oraclejdk8
 script: 
   - mvn clean install
+before_install:
+  - pip install --upgrade pip
+  - pip install --user s3cmd
+  - s3cmd --version
+  - which s3cmd
+  - pip install --user localstack
+  - localstack start &
+  - 'sleep 20' #wait for localstack to start
 
