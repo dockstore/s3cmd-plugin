@@ -56,6 +56,9 @@ public class S3CmdPluginTest {
         download(source, destination);
     }
 
+    /**
+     * This tests if a file can be uploaded to a directory then downloaded as a different file
+     */
     @Test
     public void uploadFileToDirectory() {
         String destPath = "s3cmd://test-bucket2/";
@@ -66,6 +69,9 @@ public class S3CmdPluginTest {
         download(source, destination);
     }
 
+    /**
+     * This tests if a directory can be uploaded to another directory and then all of its files could be downloaded
+     */
     @Test
     public void uploadDirectoryToDirectory() {
         String destPath = "s3cmd://test-bucket3/";
