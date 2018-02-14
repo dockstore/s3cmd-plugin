@@ -37,10 +37,10 @@ public class S3CmdPluginTest {
     private void download(String source, String destination) {
         String sourcePath = source;
         File f = new File(destination);
-        assertFalse(f.exists());
+        assertFalse(f.getAbsolutePath() + " already exists.",f.exists());
         Path destinationPath = Paths.get(f.getAbsolutePath());
         assertTrue(icgcGetProvision.downloadFrom(sourcePath, destinationPath));
-        assertTrue(f.exists());
+        assertTrue(f.getAbsolutePath() + " not downloaded." , f.exists());
     }
 
     /**
@@ -66,16 +66,16 @@ public class S3CmdPluginTest {
         download(source, destination);
     }
 
-//    @Test
-//    public void uploadDirectoryToDirectory() {
-//        String destPath = "s3cmd://test-bucket3/";
-//        Path sourceFile = Paths.get("src/test/resources/inputFilesDirectory/");
-//        icgcGetProvision.uploadTo(destPath, sourceFile, null);
-//        String source = "s3cmd://test-bucket3/file.txt";
-//        String destination = resourcesDirectory +"/outputFilesDirectory2/file.txt";
-//        download(source, destination);
-//        source = "s3cmd://test-bucket3/file2.txt";
-//        destination = resourcesDirectory +"/outputFilesDirectory2/file2.txt";
-//        download(source, destination);
-//    }
+    @Test
+    public void uploadDirectoryToDirectory() {
+        String destPath = "s3cmd://test-bucket3/";
+        Path sourceFile = Paths.get(resourcesDirectory + "/inputFilesDirectory");
+        icgcGetProvision.uploadTo(destPath, sourceFile, null);
+        String source = "s3cmd://test-bucket3/inputFilesDirectory/file.txt";
+        String destination = resourcesDirectory +"/outputFilesDirectory3/file.txt";
+        download(source, destination);
+        source = "s3cmd://test-bucket3/inputFilesDirectory/file2.txt";
+        destination = resourcesDirectory +"/outputFilesDirectory3/file2.txt";
+        download(source, destination);
+    }
 }
