@@ -4,11 +4,9 @@ services:
   - docker
 jdk:
   - oraclejdk8
+install:
+  - pip install --user -r requirements.txt
+before_script:
+  - bash start-localstack.sh
 script: 
   - mvn clean install
-before_install:
-  - pip install --upgrade pip
-  - pip install --user s3cmd
-  - pip install --user localstack
-  - bash start-localstack.sh
-

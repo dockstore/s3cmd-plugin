@@ -1,0 +1,3 @@
+pip==9.0.1
+localstack==0.8.5
+s3cmd==2.0.1
