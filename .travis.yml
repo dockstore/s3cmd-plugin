@@ -13,4 +13,5 @@ before_install:
   - which s3cmd
   - pip install --user localstack
   - localstack start &
+  - 'sleep 20' #wait for localstack to start
 
