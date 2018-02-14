@@ -27,7 +27,8 @@ public class S3CmdPluginTest {
 
     private void setConfiguration() throws Exception {
         HashMap hm = new HashMap();
-        hm.put("client", "/usr/bin/s3cmd");
+        hm.put("client", "/home/travis/.local/bin/s3cmd");
+//        hm.put("client", "/usr/local/bin/s3cmd");
         hm.put("config-file-location", resourcesDirectory + "/.s3cfg");
         hm.put("verbosity", "Minimal");
         icgcGetProvision.setConfiguration(hm);
