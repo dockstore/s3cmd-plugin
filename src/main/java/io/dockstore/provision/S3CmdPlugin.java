@@ -193,9 +193,8 @@ public class S3CmdPlugin extends Plugin {
                 LOG.info("Bucket exists");
             } else {
                 if (!createBucket(fullBucketName)) {
-                    // This is an error because it should've executed successfully regardless of whether it existed or not
-                    // We'll continue and try to upload regardless
-                    LOG.error("Could not create bucket");
+                    // New s3cmd apparently returns an error if bucket exists
+                    LOG.info("Could not create bucket");
                 }
             }
             String command = client + " -c " + configLocation + " put " + recursive + sourceFile.toString().replace(" ", "%32") + " " + destPath
